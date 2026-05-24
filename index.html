@@ -2,310 +2,225 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Site Builder SaaS</title>
+<title>Builder Pro</title>
 
 <style>
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:Arial;
-}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial;}
 
 body{
   display:flex;
-  background: radial-gradient(circle at top left, #0f172a, #020617);
+  background: radial-gradient(circle at top left,#0f172a,#020617);
   color:white;
 }
 
 /* SIDEBAR */
 .sidebar{
   width:260px;
-  height:100vh;
-  background: rgba(255,255,255,0.03);
-  padding:25px;
+  padding:20px;
+  background:rgba(255,255,255,0.03);
 }
 
-.logo{
-  font-size:22px;
-  font-weight:bold;
-  margin-bottom:30px;
-}
-
-.menu button{
+button{
   width:100%;
-  padding:12px;
   margin-bottom:10px;
-  background: rgba(255,255,255,0.05);
+  padding:10px;
   border:none;
-  border-radius:12px;
-  color:#ccc;
-  text-align:left;
+  border-radius:10px;
   cursor:pointer;
-}
-
-.menu button:hover{
-  background: rgba(255,255,255,0.1);
+  background:linear-gradient(45deg,#7c3aed,#2563eb);
   color:white;
 }
 
 /* MAIN */
-.main{
-  flex:1;
-  padding:30px;
-}
+.main{flex:1;padding:20px;}
 
-.topbar{
-  display:flex;
-  justify-content:flex-end;
-  margin-bottom:20px;
-}
-
-.login{
-  background: linear-gradient(45deg,#7c3aed,#2563eb);
-  padding:10px 20px;
-  border-radius:999px;
-}
-
-h1{
-  font-size:36px;
-  margin-bottom:10px;
-}
-
-.sub{
-  color:#94a3b8;
-  margin-bottom:30px;
-}
-
-/* LAYOUT BUILDER */
 .builder{
   display:flex;
   gap:20px;
 }
 
-/* PANEL */
-.panel{
-  width:260px;
-  background: rgba(255,255,255,0.04);
-  border-radius:20px;
-  padding:20px;
-}
-
-.panel h3{
-  margin-bottom:10px;
-}
-
-.panel button{
-  width:100%;
-  padding:10px;
-  margin-bottom:10px;
-  border:none;
-  border-radius:10px;
-  background: linear-gradient(45deg,#7c3aed,#2563eb);
-  color:white;
-  cursor:pointer;
-}
-
 /* EDITOR */
 .editor{
   flex:1;
-  background: rgba(255,255,255,0.04);
-  border-radius:20px;
+  background:rgba(255,255,255,0.05);
   padding:20px;
+  border-radius:20px;
   min-height:500px;
 }
 
 .block{
-  background: rgba(255,255,255,0.08);
-  padding:15px;
-  border-radius:12px;
+  background:rgba(255,255,255,0.08);
   margin-bottom:10px;
+  padding:10px;
+  border-radius:10px;
   position:relative;
 }
 
-.block[contenteditable]{
-  outline:none;
-}
+.block[draggable]{cursor:grab;}
 
 .delete{
   position:absolute;
-  top:5px;
   right:10px;
+  top:5px;
   cursor:pointer;
-  color:red;
 }
 
 /* PREVIEW */
 .preview{
   width:300px;
-  background:#fff;
+  background:white;
   color:black;
   border-radius:20px;
-  padding:20px;
-  overflow:auto;
+  padding:10px;
 }
 
-/* EXPORT BTN */
-.export{
-  margin-top:20px;
-  width:100%;
-  padding:12px;
-  background: linear-gradient(45deg,#22c55e,#16a34a);
-  border:none;
-  border-radius:12px;
-  color:white;
-}
+/* BUTTON STYLES */
+.btn1{background:linear-gradient(45deg,#7c3aed,#2563eb);color:white;padding:10px;border-radius:20px;border:none;}
+.btn2{background:transparent;border:2px solid black;padding:10px;border-radius:20px;}
+.btn3{background:black;color:white;padding:10px;border-radius:20px;}
 </style>
 </head>
 
 <body>
 
-<!-- SIDEBAR -->
 <div class="sidebar">
-  <div class="logo">⚡ Builder</div>
-
-  <div class="menu">
-    <button onclick="addBlock('text')">📝 Texte</button>
-    <button onclick="addBlock('title')">🔤 Titre</button>
-    <button onclick="addBlock('button')">🔘 Bouton</button>
-    <button onclick="addBlock('image')">🖼 Image</button>
-  </div>
+  <button onclick="add('title')">Titre</button>
+  <button onclick="add('text')">Texte</button>
+  <button onclick="add('image')">Image</button>
+  <button onclick="add('button')">Bouton</button>
 </div>
 
-<!-- MAIN -->
 <div class="main">
-
-  <div class="topbar">
-    <div class="login">🔐 Login</div>
-  </div>
-
-  <h1>Créateur de site</h1>
-  <p class="sub">Construisez votre site visuellement</p>
-
   <div class="builder">
-
-    <!-- PANEL -->
-    <div class="panel">
-      <h3>Actions</h3>
-      <button onclick="clearAll()">🧹 Reset</button>
-      <button onclick="renderPreview()">👁 Preview</button>
-      <button onclick="downloadHTML()">📦 Export HTML</button>
-    </div>
-
-    <!-- EDITOR -->
     <div class="editor" id="editor"></div>
-
-    <!-- PREVIEW -->
     <div class="preview" id="preview"></div>
-
   </div>
-
+  <button onclick="exportHTML()">📦 Export</button>
 </div>
 
 <script>
-var blocks = [];
-var editor = document.getElementById("editor");
-var preview = document.getElementById("preview");
+var blocks=[];
+var editor=document.getElementById("editor");
+var preview=document.getElementById("preview");
+var dragIndex=null;
 
-/* ADD BLOCK */
-function addBlock(type){
-  var content = "";
+/* ADD */
+function add(type){
+  var data={type:type,text:""};
 
-  if(type==="text") content="Texte...";
-  if(type==="title") content="Titre...";
-  if(type==="button") content="Bouton";
   if(type==="image"){
-    content=prompt("URL image");
-    if(!content) return;
+    data.src=prompt("URL image");
   }
 
-  blocks.push({type:type, content:content});
+  if(type==="button"){
+    data.text="Bouton";
+    data.link=prompt("Lien du bouton");
+    data.style="btn1";
+  }
+
+  blocks.push(data);
   render();
 }
 
-/* RENDER EDITOR */
+/* RENDER */
 function render(){
   editor.innerHTML="";
 
-  blocks.forEach(function(block,index){
-    var el = document.createElement("div");
-    el.className="block";
+  blocks.forEach((b,i)=>{
 
+    var el=document.createElement("div");
+    el.className="block";
+    el.draggable=true;
+
+    el.ondragstart=()=>dragIndex=i;
+    el.ondrop=()=>{
+      let temp=blocks[dragIndex];
+      blocks.splice(dragIndex,1);
+      blocks.splice(i,0,temp);
+      render();
+    };
+    el.ondragover=(e)=>e.preventDefault();
+
+    /* DELETE */
     var del=document.createElement("span");
     del.innerText="✖";
     del.className="delete";
-    del.onclick=function(){
-      blocks.splice(index,1);
+    del.onclick=()=>{
+      blocks.splice(i,1);
       render();
     };
-
     el.appendChild(del);
 
-    if(block.type==="image"){
-      var img=document.createElement("img");
-      img.src=block.content;
-      img.style.width="100%";
-      el.appendChild(img);
-    }else{
-      el.contentEditable=true;
-      el.innerText=block.content;
+    /* CONTENT */
+    if(b.type==="title"){
+      var t=document.createElement("input");
+      t.value=b.text||"Titre";
+      t.style.fontSize="24px";
+      t.oninput=()=>b.text=t.value;
+      el.appendChild(t);
+    }
 
-      el.oninput=function(){
-        block.content=el.innerText;
-      };
+    if(b.type==="text"){
+      var t=document.createElement("textarea");
+      t.value=b.text||"Texte...";
+      t.oninput=()=>b.text=t.value;
+
+      var size=document.createElement("input");
+      size.type="range"; size.min=10; size.max=50;
+      size.value=b.size||16;
+      size.oninput=()=>b.size=size.value;
+
+      el.appendChild(t);
+      el.appendChild(size);
+    }
+
+    if(b.type==="image"){
+      var img=document.createElement("img");
+      img.src=b.src;
+      img.style.width=(b.width||100)+"%";
+
+      var range=document.createElement("input");
+      range.type="range"; range.min=20; range.max=100;
+      range.value=b.width||100;
+      range.oninput=()=>b.width=range.value;
+
+      el.appendChild(img);
+      el.appendChild(range);
+    }
+
+    if(b.type==="button"){
+      var txt=document.createElement("input");
+      txt.value=b.text;
+      txt.oninput=()=>b.text=txt.value;
+
+      var link=document.createElement("input");
+      link.value=b.link||"";
+      link.placeholder="Lien";
+      link.oninput=()=>b.link=link.value;
+
+      var select=document.createElement("select");
+      ["btn1","btn2","btn3"].forEach(s=>{
+        var opt=document.createElement("option");
+        opt.value=s;
+        opt.text=s;
+        select.appendChild(opt);
+      });
+      select.onchange=()=>b.style=select.value;
+
+      el.appendChild(txt);
+      el.appendChild(link);
+      el.appendChild(select);
     }
 
     editor.appendChild(el);
   });
+
+  renderPreview();
 }
 
 /* PREVIEW */
 function renderPreview(){
   preview.innerHTML="";
 
-  blocks.forEach(function(b){
-    if(b.type==="title"){
-      preview.innerHTML += "<h1>"+b.content+"</h1>";
-    }
-    if(b.type==="text"){
-      preview.innerHTML += "<p>"+b.content+"</p>";
-    }
-    if(b.type==="button"){
-      preview.innerHTML += "<button>"+b.content+"</button>";
-    }
-    if(b.type==="image"){
-      preview.innerHTML += "<img src='"+b.content+"' style='max-width:100%'>";
-    }
-  });
-}
+  blocks.forEach(b=>{
 
-/* EXPORT */
-function downloadHTML(){
-  var html="<html><body>";
-
-  blocks.forEach(function(b){
-    if(b.type==="title") html+="<h1>"+b.content+"</h1>";
-    if(b.type==="text") html+="<p>"+b.content+"</p>";
-    if(b.type==="button") html+="<button>"+b.content+"</button>";
-    if(b.type==="image") html+="<img src='"+b.content+"'>";
-  });
-
-  html+="</body></html>";
-
-  var blob=new Blob([html]);
-  var a=document.createElement("a");
-  a.href=URL.createObjectURL(blob);
-  a.download="site.html";
-  a.click();
-}
-
-function clearAll(){
-  blocks=[];
-  render();
-  preview.innerHTML="";
-}
-
-</script>
-
-</body>
-</html>
