@@ -2,201 +2,158 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>MyApps UI</title>
+<title>Site Builder SaaS</title>
 
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: Arial;
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:Arial;
 }
 
-body {
-  display: flex;
+body{
+  display:flex;
   background: radial-gradient(circle at top left, #0f172a, #020617);
-  color: white;
+  color:white;
 }
 
-/* ========= SIDEBAR ========= */
-.sidebar {
-  width: 260px;
-  height: 100vh;
+/* SIDEBAR */
+.sidebar{
+  width:260px;
+  height:100vh;
   background: rgba(255,255,255,0.03);
-  padding: 25px;
+  padding:25px;
 }
 
-.logo {
-  font-size: 22px;
-  font-weight: bold;
-  margin-bottom: 40px;
+.logo{
+  font-size:22px;
+  font-weight:bold;
+  margin-bottom:30px;
 }
 
-.menu-title {
-  color: #94a3b8;
-  margin-bottom: 15px;
+.menu button{
+  width:100%;
+  padding:12px;
+  margin-bottom:10px;
+  background: rgba(255,255,255,0.05);
+  border:none;
+  border-radius:12px;
+  color:#ccc;
+  text-align:left;
+  cursor:pointer;
 }
 
-.menu button {
-  width: 100%;
-  padding: 12px;
-  background: rgba(255,255,255,0.03);
-  border: none;
-  color: #ccc;
-  margin-bottom: 10px;
-  text-align: left;
-  border-radius: 12px;
-  cursor: pointer;
+.menu button:hover{
+  background: rgba(255,255,255,0.1);
+  color:white;
 }
 
-.menu button:hover {
+/* MAIN */
+.main{
+  flex:1;
+  padding:30px;
+}
+
+.topbar{
+  display:flex;
+  justify-content:flex-end;
+  margin-bottom:20px;
+}
+
+.login{
+  background: linear-gradient(45deg,#7c3aed,#2563eb);
+  padding:10px 20px;
+  border-radius:999px;
+}
+
+h1{
+  font-size:36px;
+  margin-bottom:10px;
+}
+
+.sub{
+  color:#94a3b8;
+  margin-bottom:30px;
+}
+
+/* LAYOUT BUILDER */
+.builder{
+  display:flex;
+  gap:20px;
+}
+
+/* PANEL */
+.panel{
+  width:260px;
+  background: rgba(255,255,255,0.04);
+  border-radius:20px;
+  padding:20px;
+}
+
+.panel h3{
+  margin-bottom:10px;
+}
+
+.panel button{
+  width:100%;
+  padding:10px;
+  margin-bottom:10px;
+  border:none;
+  border-radius:10px;
+  background: linear-gradient(45deg,#7c3aed,#2563eb);
+  color:white;
+  cursor:pointer;
+}
+
+/* EDITOR */
+.editor{
+  flex:1;
+  background: rgba(255,255,255,0.04);
+  border-radius:20px;
+  padding:20px;
+  min-height:500px;
+}
+
+.block{
   background: rgba(255,255,255,0.08);
-  color: white;
+  padding:15px;
+  border-radius:12px;
+  margin-bottom:10px;
+  position:relative;
 }
 
-/* ========= MAIN ========= */
-.main {
-  flex: 1;
-  padding: 40px;
+.block[contenteditable]{
+  outline:none;
 }
 
-/* HEADER */
-.topbar {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 20px;
+.delete{
+  position:absolute;
+  top:5px;
+  right:10px;
+  cursor:pointer;
+  color:red;
 }
 
-.login {
-  background: linear-gradient(45deg, #7c3aed, #2563eb);
-  border-radius: 999px;
-  padding: 10px 20px;
+/* PREVIEW */
+.preview{
+  width:300px;
+  background:#fff;
+  color:black;
+  border-radius:20px;
+  padding:20px;
+  overflow:auto;
 }
 
-/* TITRE */
-h1 {
-  font-size: 42px;
-}
-
-.sub {
-  color: #94a3b8;
-  margin-bottom: 30px;
-}
-
-/* ========= CARDS ========= */
-.grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 25px;
-}
-
-.card {
-  background: linear-gradient(145deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
-  padding: 25px;
-  border-radius: 25px;
-  position: relative;
-  box-shadow: 0 0 40px rgba(124,58,237,0.2);
-  transition: 0.3s;
-}
-
-.card:hover {
-  transform: translateY(-5px);
-}
-
-.icon-box {
-  width: 65px;
-  height: 65px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 20px;
-  background: linear-gradient(45deg, #7c3aed, #2563eb);
-  margin-bottom: 20px;
-  font-size: 28px;
-}
-
-.card h2 {
-  font-size: 28px;
-  margin-bottom: 10px;
-}
-
-.card p {
-  color: #94a3b8;
-  margin-bottom: 20px;
-}
-
-.open-btn {
-  background: linear-gradient(45deg, #7c3aed, #2563eb);
-  padding: 10px 20px;
-  border-radius: 999px;
-  border: none;
-  color: white;
-}
-
-/* ========= APP VIEW ========= */
-.app-container {
-  margin-top: 40px;
-  display: flex;
-  gap: 20px;
-}
-
-/* FLOW */
-.flow {
-  flex: 2;
-  background: rgba(255,255,255,0.04);
-  padding: 20px;
-  border-radius: 20px;
-}
-
-.message {
-  background: rgba(255,255,255,0.06);
-  padding: 10px;
-  border-radius: 12px;
-  margin-bottom: 10px;
-}
-
-.input-zone {
-  margin-top: 20px;
-  display: flex;
-  gap: 10px;
-}
-
-.input-zone input {
-  flex: 1;
-  padding: 10px;
-  border-radius: 999px;
-  border: none;
-  background: rgba(255,255,255,0.05);
-  color: white;
-}
-
-.send {
-  background: linear-gradient(45deg, #7c3aed, #2563eb);
-  border: none;
-  border-radius: 999px;
-  padding: 10px 15px;
-  color: white;
-}
-
-/* FILES */
-.files {
-  flex: 1;
-  background: rgba(255,255,255,0.04);
-  padding: 20px;
-  border-radius: 20px;
-}
-
-.file {
-  display: flex;
-  justify-content: space-between;
-  padding: 10px;
-  background: rgba(255,255,255,0.05);
-  border-radius: 12px;
-  margin-bottom: 10px;
-}
-
-.file span {
-  color: #94a3b8;
+/* EXPORT BTN */
+.export{
+  margin-top:20px;
+  width:100%;
+  padding:12px;
+  background: linear-gradient(45deg,#22c55e,#16a34a);
+  border:none;
+  border-radius:12px;
+  color:white;
 }
 </style>
 </head>
@@ -205,14 +162,13 @@ h1 {
 
 <!-- SIDEBAR -->
 <div class="sidebar">
-  <div class="logo">⚡ MyApps</div>
+  <div class="logo">⚡ Builder</div>
 
-  <div class="menu-title">APPLICATIONS</div>
   <div class="menu">
-    <button onclick="openApp()">💬 Flow</button>
-    <button onclick="openApp()">📁 Files</button>
-    <button>🏋️ Sport-Leveling</button>
-    <button>✅ Check</button>
+    <button onclick="addBlock('text')">📝 Texte</button>
+    <button onclick="addBlock('title')">🔤 Titre</button>
+    <button onclick="addBlock('button')">🔘 Bouton</button>
+    <button onclick="addBlock('image')">🖼 Image</button>
   </div>
 </div>
 
@@ -220,3 +176,136 @@ h1 {
 <div class="main">
 
   <div class="topbar">
+    <div class="login">🔐 Login</div>
+  </div>
+
+  <h1>Créateur de site</h1>
+  <p class="sub">Construisez votre site visuellement</p>
+
+  <div class="builder">
+
+    <!-- PANEL -->
+    <div class="panel">
+      <h3>Actions</h3>
+      <button onclick="clearAll()">🧹 Reset</button>
+      <button onclick="renderPreview()">👁 Preview</button>
+      <button onclick="downloadHTML()">📦 Export HTML</button>
+    </div>
+
+    <!-- EDITOR -->
+    <div class="editor" id="editor"></div>
+
+    <!-- PREVIEW -->
+    <div class="preview" id="preview"></div>
+
+  </div>
+
+</div>
+
+<script>
+var blocks = [];
+var editor = document.getElementById("editor");
+var preview = document.getElementById("preview");
+
+/* ADD BLOCK */
+function addBlock(type){
+  var content = "";
+
+  if(type==="text") content="Texte...";
+  if(type==="title") content="Titre...";
+  if(type==="button") content="Bouton";
+  if(type==="image"){
+    content=prompt("URL image");
+    if(!content) return;
+  }
+
+  blocks.push({type:type, content:content});
+  render();
+}
+
+/* RENDER EDITOR */
+function render(){
+  editor.innerHTML="";
+
+  blocks.forEach(function(block,index){
+    var el = document.createElement("div");
+    el.className="block";
+
+    var del=document.createElement("span");
+    del.innerText="✖";
+    del.className="delete";
+    del.onclick=function(){
+      blocks.splice(index,1);
+      render();
+    };
+
+    el.appendChild(del);
+
+    if(block.type==="image"){
+      var img=document.createElement("img");
+      img.src=block.content;
+      img.style.width="100%";
+      el.appendChild(img);
+    }else{
+      el.contentEditable=true;
+      el.innerText=block.content;
+
+      el.oninput=function(){
+        block.content=el.innerText;
+      };
+    }
+
+    editor.appendChild(el);
+  });
+}
+
+/* PREVIEW */
+function renderPreview(){
+  preview.innerHTML="";
+
+  blocks.forEach(function(b){
+    if(b.type==="title"){
+      preview.innerHTML += "<h1>"+b.content+"</h1>";
+    }
+    if(b.type==="text"){
+      preview.innerHTML += "<p>"+b.content+"</p>";
+    }
+    if(b.type==="button"){
+      preview.innerHTML += "<button>"+b.content+"</button>";
+    }
+    if(b.type==="image"){
+      preview.innerHTML += "<img src='"+b.content+"' style='max-width:100%'>";
+    }
+  });
+}
+
+/* EXPORT */
+function downloadHTML(){
+  var html="<html><body>";
+
+  blocks.forEach(function(b){
+    if(b.type==="title") html+="<h1>"+b.content+"</h1>";
+    if(b.type==="text") html+="<p>"+b.content+"</p>";
+    if(b.type==="button") html+="<button>"+b.content+"</button>";
+    if(b.type==="image") html+="<img src='"+b.content+"'>";
+  });
+
+  html+="</body></html>";
+
+  var blob=new Blob([html]);
+  var a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download="site.html";
+  a.click();
+}
+
+function clearAll(){
+  blocks=[];
+  render();
+  preview.innerHTML="";
+}
+
+</script>
+
+</body>
+</html>
