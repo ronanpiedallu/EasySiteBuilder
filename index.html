@@ -2,172 +2,283 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>EasySite SaaS</title>
+<title>MyApps SaaS</title>
 
 <style>
-body {
+* {
   margin: 0;
-  font-family: Arial;
-  display: flex;
-  background: #f4f6f8;
+  padding: 0;
+  box-sizing: border-box;
 }
 
+body {
+  display: flex;
+  font-family: Arial;
+  background: radial-gradient(circle at top left, #0f172a, #020617);
+  color: white;
+}
+
+/* ===== SIDEBAR ===== */
 .sidebar {
   width: 260px;
-  background: white;
+  height: 100vh;
+  background: rgba(255,255,255,0.03);
+  backdrop-filter: blur(10px);
   padding: 20px;
-  border-right: 1px solid #ddd;
 }
 
-.editor {
+.logo {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 30px;
+}
+
+.menu button {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 10px;
+  background: transparent;
+  border: none;
+  color: #ccc;
+  text-align: left;
+  cursor: pointer;
+  border-radius: 10px;
+}
+
+.menu button:hover {
+  background: rgba(255,255,255,0.05);
+  color: white;
+}
+
+/* ===== MAIN ===== */
+.main {
   flex: 1;
+  padding: 40px;
+}
+
+/* TOP BAR */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 40px;
+}
+
+.login-btn {
+  background: linear-gradient(45deg, #7c3aed, #2563eb);
+  padding: 10px 20px;
+  border-radius: 999px;
+  border: none;
+  color: white;
+}
+
+/* TITLE */
+h1 {
+  font-size: 42px;
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  color: #94a3b8;
+  margin-bottom: 30px;
+}
+
+/* ===== CARDS ===== */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.card {
+  background: rgba(255,255,255,0.05);
+  border-radius: 20px;
+  padding: 25px;
+  position: relative;
+  transition: 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(124,58,237,0.3);
+}
+
+.icon {
+  font-size: 30px;
+  margin-bottom: 20px;
+}
+
+.card h2 {
+  font-size: 26px;
+  margin-bottom: 10px;
+}
+
+.card p {
+  color: #94a3b8;
+  margin-bottom: 20px;
+}
+
+.open-btn {
+  background: linear-gradient(45deg, #7c3aed, #2563eb);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 999px;
+  color: white;
+  cursor: pointer;
+}
+
+/* ===== EDITOR ===== */
+.editor {
+  margin-top: 40px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 20px;
   padding: 20px;
 }
 
 .block {
-  background: white;
-  padding: 15px;
+  background: rgba(255,255,255,0.08);
+  padding: 12px;
   margin-bottom: 10px;
   border-radius: 10px;
-}
-
-button {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
-  border: none;
-  background: #007bff;
-  color: white;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.topbar {
-  position: fixed;
-  top: 0;
-  left: 260px;
-  right: 0;
-  background: white;
-  padding: 10px;
-  border-bottom: 1px solid #ddd;
 }
 </style>
 </head>
 
 <body>
 
+<!-- Sidebar -->
 <div class="sidebar">
-  <h3>Projets</h3>
-  <button onclick="newProject()">➕ Nouveau</button>
-  <button onclick="saveProject()">💾 Sauvegarder</button>
-  <button onclick="loadProjects()">📂 Charger</button>
+  <div class="logo">⚡ MyApps</div>
 
-  <h3>Blocs</h3>
-  <button onclick="addText()">Texte</button>
-  <button onclick="addImage()">Image</button>
+  <div class="menu">
+    <button onclick="openApp('flow')">💬 Flow</button>
+    <button onclick="openApp('files')">📁 Files</button>
+    <button onclick="openApp('builder')">🛠 Builder</button>
+  </div>
 </div>
 
-<div class="editor" id="editor" style="margin-top:50px;"></div>
+<!-- Main -->
+<div class="main">
+
+  <!-- Top -->
+  <div class="topbar">
+    <div></div>
+    <button class="login-btn">🔐 Login / Register</button>
+  </div>
+
+  <h1>Bienvenue 👋</h1>
+  <p class="subtitle">Votre plateforme SaaS moderne</p>
+
+  <!-- Cards -->
+  <div class="grid">
+
+    <div class="card">
+      <div class="icon">💬</div>
+      <h2>Flow</h2>
+      <p>Chats et partage en temps réel.</p>
+      <button class="open-btn" onclick="openApp('flow')">Ouvrir →</button>
+    </div>
+
+    <div class="card">
+      <div class="icon">📁</div>
+      <h2>Files</h2>
+      <p>Stockez et partagez vos fichiers.</p>
+      <button class="open-btn" onclick="openApp('files')">Ouvrir →</button>
+    </div>
+
+    <div class="card">
+      <div class="icon">🛠</div>
+      <h2>Builder</h2>
+      <p>Créez des sites facilement.</p>
+      <button class="open-btn" onclick="openApp('builder')">Ouvrir →</button>
+    </div>
+
+  </div>
+
+  <!-- APP CONTENT -->
+  <div id="app"></div>
+
+</div>
 
 <script>
-var editor = document.getElementById("editor");
+var app = document.getElementById("app");
 var blocks = [];
-var projectName = "mon-site";
 
-// ===== Auth simple =====
-var user = localStorage.getItem("user");
-if (!user) {
-  user = prompt("Nom utilisateur :");
-  localStorage.setItem("user", user);
-}
+/* ===== NAVIGATION ===== */
+function openApp(name) {
 
-// ===== Render =====
-function render() {
-  editor.innerHTML = "";
-
-  blocks.forEach(function(block, index) {
-    var el = document.createElement("div");
-    el.className = "block";
-
-    if (block.type === "text") {
-      var txt = document.createElement("div");
-      txt.contentEditable = true;
-      txt.innerText = block.content;
-      txt.oninput = function() {
-        block.content = txt.innerText;
-      };
-      el.appendChild(txt);
-    }
-
-    if (block.type === "image") {
-      var img = document.createElement("img");
-      img.src = block.src;
-      img.style.width = "100%";
-      el.appendChild(img);
-    }
-
-    editor.appendChild(el);
-  });
-}
-
-// ===== Blocs =====
-function addText() {
-  blocks.push({ type: "text", content: "Texte..." });
-  render();
-}
-
-function addImage() {
-  var url = prompt("URL image :");
-  if (url) {
-    blocks.push({ type: "image", src: url });
+  if (name === "builder") {
+    app.innerHTML = `
+      <div class="editor">
+        <h2>Site Builder</h2>
+        <button onclick="addText()">➕ Texte</button>
+        <button onclick="exportHTML()">📦 Export</button>
+        <div id="editorZone"></div>
+      </div>
+    `;
     render();
+  }
+
+  if (name === "flow") {
+    app.innerHTML = `
+      <div class="editor">
+        <h2>Flow</h2>
+        <p>Messagerie simple</p>
+      </div>
+    `;
+  }
+
+  if (name === "files") {
+    app.innerHTML = `
+      <div class="editor">
+        <h2>Files</h2>
+        <p>Liste de fichiers...</p>
+      </div>
+    `;
   }
 }
 
-// ===== SaaS features =====
-function saveProject() {
-  var name = prompt("Nom du projet :", projectName);
-  if (!name) return;
+/* ===== BUILDER ===== */
+function render() {
+  var zone = document.getElementById("editorZone");
+  if (!zone) return;
 
-  projectName = name;
+  zone.innerHTML = "";
 
-  var data = {
-    name: name,
-    blocks: blocks
-  };
+  blocks.forEach(function(block) {
+    var el = document.createElement("div");
+    el.className = "block";
+    el.contentEditable = true;
+    el.innerText = block.content;
 
-  var all = JSON.parse(localStorage.getItem(user + "_projects") || "[]");
-  all.push(data);
-  localStorage.setItem(user + "_projects", JSON.stringify(all));
+    el.oninput = function() {
+      block.content = el.innerText;
+    };
 
-  alert("✅ Projet sauvegardé");
+    zone.appendChild(el);
+  });
 }
 
-function loadProjects() {
-  var all = JSON.parse(localStorage.getItem(user + "_projects") || "[]");
+function addText() {
+  blocks.push({ content: "Modifier..." });
+  render();
+}
 
-  var list = "Choisis un projet:\n";
-  all.forEach(function(p, i) {
-    list += i + " - " + p.name + "\n";
+function exportHTML() {
+  var html = "<html><body>";
+
+  blocks.forEach(function(b) {
+    html += "<p>" + b.content + "</p>";
   });
 
-  var choice = prompt(list);
-  if (choice === null) return;
+  html += "</body></html>";
 
-  var p = all[choice];
-  blocks = p.blocks;
-  projectName = p.name;
-
-  render();
+  var blob = new Blob([html]);
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "site.html";
+  a.click();
 }
-
-function newProject() {
-  blocks = [];
-  projectName = "nouveau projet";
-  render();
-}
-
-render();
 </script>
 
 </body>
