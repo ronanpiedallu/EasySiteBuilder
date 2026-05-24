@@ -2,114 +2,121 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>MyApps SaaS</title>
+<title>MyApps UI</title>
 
 <style>
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: Arial;
 }
 
 body {
   display: flex;
-  font-family: Arial;
   background: radial-gradient(circle at top left, #0f172a, #020617);
   color: white;
 }
 
-/* ===== SIDEBAR ===== */
+/* ========= SIDEBAR ========= */
 .sidebar {
   width: 260px;
   height: 100vh;
   background: rgba(255,255,255,0.03);
-  backdrop-filter: blur(10px);
-  padding: 20px;
+  padding: 25px;
 }
 
 .logo {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: bold;
-  margin-bottom: 30px;
+  margin-bottom: 40px;
+}
+
+.menu-title {
+  color: #94a3b8;
+  margin-bottom: 15px;
 }
 
 .menu button {
-  display: block;
   width: 100%;
   padding: 12px;
-  margin-bottom: 10px;
-  background: transparent;
+  background: rgba(255,255,255,0.03);
   border: none;
   color: #ccc;
+  margin-bottom: 10px;
   text-align: left;
+  border-radius: 12px;
   cursor: pointer;
-  border-radius: 10px;
 }
 
 .menu button:hover {
-  background: rgba(255,255,255,0.05);
+  background: rgba(255,255,255,0.08);
   color: white;
 }
 
-/* ===== MAIN ===== */
+/* ========= MAIN ========= */
 .main {
   flex: 1;
   padding: 40px;
 }
 
-/* TOP BAR */
+/* HEADER */
 .topbar {
   display: flex;
-  justify-content: space-between;
-  margin-bottom: 40px;
+  justify-content: flex-end;
+  margin-bottom: 20px;
 }
 
-.login-btn {
+.login {
   background: linear-gradient(45deg, #7c3aed, #2563eb);
-  padding: 10px 20px;
   border-radius: 999px;
-  border: none;
-  color: white;
+  padding: 10px 20px;
 }
 
-/* TITLE */
+/* TITRE */
 h1 {
   font-size: 42px;
-  margin-bottom: 10px;
 }
 
-.subtitle {
+.sub {
   color: #94a3b8;
   margin-bottom: 30px;
 }
 
-/* ===== CARDS ===== */
+/* ========= CARDS ========= */
 .grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
+  gap: 25px;
 }
 
 .card {
-  background: rgba(255,255,255,0.05);
-  border-radius: 20px;
+  background: linear-gradient(145deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
   padding: 25px;
+  border-radius: 25px;
   position: relative;
+  box-shadow: 0 0 40px rgba(124,58,237,0.2);
   transition: 0.3s;
 }
 
 .card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 10px 30px rgba(124,58,237,0.3);
 }
 
-.icon {
-  font-size: 30px;
+.icon-box {
+  width: 65px;
+  height: 65px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px;
+  background: linear-gradient(45deg, #7c3aed, #2563eb);
   margin-bottom: 20px;
+  font-size: 28px;
 }
 
 .card h2 {
-  font-size: 26px;
+  font-size: 28px;
   margin-bottom: 10px;
 }
 
@@ -120,166 +127,96 @@ h1 {
 
 .open-btn {
   background: linear-gradient(45deg, #7c3aed, #2563eb);
-  border: none;
   padding: 10px 20px;
   border-radius: 999px;
+  border: none;
   color: white;
-  cursor: pointer;
 }
 
-/* ===== EDITOR ===== */
-.editor {
+/* ========= APP VIEW ========= */
+.app-container {
   margin-top: 40px;
-  background: rgba(255,255,255,0.05);
-  border-radius: 20px;
-  padding: 20px;
+  display: flex;
+  gap: 20px;
 }
 
-.block {
-  background: rgba(255,255,255,0.08);
-  padding: 12px;
+/* FLOW */
+.flow {
+  flex: 2;
+  background: rgba(255,255,255,0.04);
+  padding: 20px;
+  border-radius: 20px;
+}
+
+.message {
+  background: rgba(255,255,255,0.06);
+  padding: 10px;
+  border-radius: 12px;
   margin-bottom: 10px;
-  border-radius: 10px;
+}
+
+.input-zone {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.input-zone input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 999px;
+  border: none;
+  background: rgba(255,255,255,0.05);
+  color: white;
+}
+
+.send {
+  background: linear-gradient(45deg, #7c3aed, #2563eb);
+  border: none;
+  border-radius: 999px;
+  padding: 10px 15px;
+  color: white;
+}
+
+/* FILES */
+.files {
+  flex: 1;
+  background: rgba(255,255,255,0.04);
+  padding: 20px;
+  border-radius: 20px;
+}
+
+.file {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 12px;
+  margin-bottom: 10px;
+}
+
+.file span {
+  color: #94a3b8;
 }
 </style>
 </head>
 
 <body>
 
-<!-- Sidebar -->
+<!-- SIDEBAR -->
 <div class="sidebar">
   <div class="logo">⚡ MyApps</div>
 
+  <div class="menu-title">APPLICATIONS</div>
   <div class="menu">
-    <button onclick="openApp('flow')">💬 Flow</button>
-    <button onclick="openApp('files')">📁 Files</button>
-    <button onclick="openApp('builder')">🛠 Builder</button>
+    <button onclick="openApp()">💬 Flow</button>
+    <button onclick="openApp()">📁 Files</button>
+    <button>🏋️ Sport-Leveling</button>
+    <button>✅ Check</button>
   </div>
 </div>
 
-<!-- Main -->
+<!-- MAIN -->
 <div class="main">
 
-  <!-- Top -->
   <div class="topbar">
-    <div></div>
-    <button class="login-btn">🔐 Login / Register</button>
-  </div>
-
-  <h1>Bienvenue 👋</h1>
-  <p class="subtitle">Votre plateforme SaaS moderne</p>
-
-  <!-- Cards -->
-  <div class="grid">
-
-    <div class="card">
-      <div class="icon">💬</div>
-      <h2>Flow</h2>
-      <p>Chats et partage en temps réel.</p>
-      <button class="open-btn" onclick="openApp('flow')">Ouvrir →</button>
-    </div>
-
-    <div class="card">
-      <div class="icon">📁</div>
-      <h2>Files</h2>
-      <p>Stockez et partagez vos fichiers.</p>
-      <button class="open-btn" onclick="openApp('files')">Ouvrir →</button>
-    </div>
-
-    <div class="card">
-      <div class="icon">🛠</div>
-      <h2>Builder</h2>
-      <p>Créez des sites facilement.</p>
-      <button class="open-btn" onclick="openApp('builder')">Ouvrir →</button>
-    </div>
-
-  </div>
-
-  <!-- APP CONTENT -->
-  <div id="app"></div>
-
-</div>
-
-<script>
-var app = document.getElementById("app");
-var blocks = [];
-
-/* ===== NAVIGATION ===== */
-function openApp(name) {
-
-  if (name === "builder") {
-    app.innerHTML = `
-      <div class="editor">
-        <h2>Site Builder</h2>
-        <button onclick="addText()">➕ Texte</button>
-        <button onclick="exportHTML()">📦 Export</button>
-        <div id="editorZone"></div>
-      </div>
-    `;
-    render();
-  }
-
-  if (name === "flow") {
-    app.innerHTML = `
-      <div class="editor">
-        <h2>Flow</h2>
-        <p>Messagerie simple</p>
-      </div>
-    `;
-  }
-
-  if (name === "files") {
-    app.innerHTML = `
-      <div class="editor">
-        <h2>Files</h2>
-        <p>Liste de fichiers...</p>
-      </div>
-    `;
-  }
-}
-
-/* ===== BUILDER ===== */
-function render() {
-  var zone = document.getElementById("editorZone");
-  if (!zone) return;
-
-  zone.innerHTML = "";
-
-  blocks.forEach(function(block) {
-    var el = document.createElement("div");
-    el.className = "block";
-    el.contentEditable = true;
-    el.innerText = block.content;
-
-    el.oninput = function() {
-      block.content = el.innerText;
-    };
-
-    zone.appendChild(el);
-  });
-}
-
-function addText() {
-  blocks.push({ content: "Modifier..." });
-  render();
-}
-
-function exportHTML() {
-  var html = "<html><body>";
-
-  blocks.forEach(function(b) {
-    html += "<p>" + b.content + "</p>";
-  });
-
-  html += "</body></html>";
-
-  var blob = new Blob([html]);
-  var a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "site.html";
-  a.click();
-}
-</script>
-
-</body>
-</html>
