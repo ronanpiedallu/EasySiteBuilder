@@ -224,3 +224,41 @@ function renderPreview(){
 
   blocks.forEach(b=>{
 
+    if(b.type==="title"){
+      preview.innerHTML+=`<h1>${b.text}</h1>`;
+    }
+
+    if(b.type==="text"){
+      preview.innerHTML+=`<p style="font-size:${b.size||16}px">${b.text}</p>`;
+    }
+
+    if(b.type==="image"){
+      preview.innerHTML+=`<img src="${b.src}" style="width:${b.width){
+      preview.innerHTML+=`<a href="${b.linkclass="${b.style}">${b.text}</button></a>`;
+    }
+
+  });
+}
+
+/* EXPORT */
+function exportHTML(){
+  let html="<html><body>";
+
+  blocks.forEach(b=>{
+    if(b.type==="title") html+=`<h1>${b.text}</h1>`;
+    if(b.type==="text") html+=`<p style="font-size:${b.size}px">${b.text}</p>`;
+    if(b.type==="image") html+=`<img src="${b.src}" style="width:${b html+=`<a href="${b.link${b.text}</button></a>`;
+  });
+
+  html+="</body></html>";
+
+  var blob=new Blob([html]);
+  var a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download="site.html";
+  a.click();
+}
+</script>
+
+</body>
+</html>
