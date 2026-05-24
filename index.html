@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>EasySite Builder PRO</title>
+<title>EasySite SaaS</title>
 
 <style>
 body {
@@ -22,7 +22,6 @@ body {
 .editor {
   flex: 1;
   padding: 20px;
-  min-height: 100vh;
 }
 
 .block {
@@ -30,16 +29,6 @@ body {
   padding: 15px;
   margin-bottom: 10px;
   border-radius: 10px;
-  cursor: grab;
-  position: relative;
-}
-
-.delete-btn {
-  position: absolute;
-  top: 5px;
-  right: 10px;
-  color: red;
-  cursor: pointer;
 }
 
 button {
@@ -53,12 +42,14 @@ button {
   cursor: pointer;
 }
 
-button:hover {
-  background: #0056b3;
-}
-
-.export {
-  background: green;
+.topbar {
+  position: fixed;
+  top: 0;
+  left: 260px;
+  right: 0;
+  background: white;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
 }
 </style>
 </head>
@@ -66,94 +57,62 @@ button:hover {
 <body>
 
 <div class="sidebar">
+  <h3>Projets</h3>
+  <button onclick="newProject()">➕ Nouveau</button>
+  <button onclick="saveProject()">💾 Sauvegarder</button>
+  <button onclick="loadProjects()">📂 Charger</button>
+
   <h3>Blocs</h3>
   <button onclick="addText()">Texte</button>
   <button onclick="addImage()">Image</button>
-  <button onclick="addButton()">Bouton</button>
-
-  <h3>Exporter</h3>
-  <button class="export" onclick="downloadHTML()">Télécharger le site</button>
 </div>
 
-<div class="editor" id="editor"></div>
+<div class="editor" id="editor" style="margin-top:50px;"></div>
 
 <script>
 var editor = document.getElementById("editor");
 var blocks = [];
-var dragIndex = null;
+var projectName = "mon-site";
 
+// ===== Auth simple =====
+var user = localStorage.getItem("user");
+if (!user) {
+  user = prompt("Nom utilisateur :");
+  localStorage.setItem("user", user);
+}
+
+// ===== Render =====
 function render() {
   editor.innerHTML = "";
 
-  for (var i = 0; i < blocks.length; i++) {
-    (function(index) {
-      var block = blocks[index];
+  blocks.forEach(function(block, index) {
+    var el = document.createElement("div");
+    el.className = "block";
 
-      var el = document.createElement("div");
-      el.className = "block";
-      el.draggable = true;
-
-      // drag start
-      el.ondragstart = function() {
-        dragIndex = index;
+    if (block.type === "text") {
+      var txt = document.createElement("div");
+      txt.contentEditable = true;
+      txt.innerText = block.content;
+      txt.oninput = function() {
+        block.content = txt.innerText;
       };
+      el.appendChild(txt);
+    }
 
-      // drag over
-      el.ondragover = function(e) {
-        e.preventDefault();
-      };
+    if (block.type === "image") {
+      var img = document.createElement("img");
+      img.src = block.src;
+      img.style.width = "100%";
+      el.appendChild(img);
+    }
 
-      // drop
-      el.ondrop = function() {
-        var temp = blocks[dragIndex];
-        blocks.splice(dragIndex, 1);
-        blocks.splice(index, 0, temp);
-        render();
-      };
-
-      // delete button
-      var del = document.createElement("span");
-      del.className = "delete-btn";
-      del.innerText = "✖";
-      del.onclick = function() {
-        blocks.splice(index, 1);
-        render();
-      };
-      el.appendChild(del);
-
-      // content
-      if (block.type === "text") {
-        var txt = document.createElement("div");
-        txt.contentEditable = true;
-        txt.innerText = block.content;
-
-        txt.oninput = function() {
-          block.content = txt.innerText;
-        };
-
-        el.appendChild(txt);
-      }
-
-      if (block.type === "image") {
-        var img = document.createElement("img");
-        img.src = block.src;
-        img.style.width = "100%";
-        el.appendChild(img);
-      }
-
-      if (block.type === "button") {
-        var btn = document.createElement("button");
-        btn.innerText = block.label;
-        el.appendChild(btn);
-      }
-
-      editor.appendChild(el);
-    })(i);
-  }
+    editor.appendChild(el);
+  });
 }
 
+// ===== Blocs =====
 function addText() {
-  blocks.push({ type: "text", content: "Double-clique pour modifier" });
+  blocks.push({ type: "text", content: "Texte..." });
   render();
 }
 
@@ -165,41 +124,50 @@ function addImage() {
   }
 }
 
-function addButton() {
-  var label = prompt("Texte bouton :");
-  if (label) {
-    blocks.push({ type: "button", label: label });
-    render();
-  }
+// ===== SaaS features =====
+function saveProject() {
+  var name = prompt("Nom du projet :", projectName);
+  if (!name) return;
+
+  projectName = name;
+
+  var data = {
+    name: name,
+    blocks: blocks
+  };
+
+  var all = JSON.parse(localStorage.getItem(user + "_projects") || "[]");
+  all.push(data);
+  localStorage.setItem(user + "_projects", JSON.stringify(all));
+
+  alert("✅ Projet sauvegardé");
 }
 
-function downloadHTML() {
-  var html = "<!DOCTYPE html><html><head><meta charset='UTF-8'><title>Mon site</title></head><body>";
+function loadProjects() {
+  var all = JSON.parse(localStorage.getItem(user + "_projects") || "[]");
 
-  for (var i = 0; i < blocks.length; i++) {
-    var block = blocks[i];
+  var list = "Choisis un projet:\n";
+  all.forEach(function(p, i) {
+    list += i + " - " + p.name + "\n";
+  });
 
-    if (block.type === "text") {
-      html += "<p>" + block.content + "</p>";
-    }
+  var choice = prompt(list);
+  if (choice === null) return;
 
-    if (block.type === "image") {
-      html += "<img src='" + block.src + "' style='max-width:100%'>";
-    }
+  var p = all[choice];
+  blocks = p.blocks;
+  projectName = p.name;
 
-    if (block.type === "button") {
-      html += "<button>" + block.label + "</button>";
-    }
-  }
-
-  html += "</body></html>";
-
-  var blob = new Blob([html], { type: "text/html" });
-  var a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "mon-site.html";
-  a.click();
+  render();
 }
+
+function newProject() {
+  blocks = [];
+  projectName = "nouveau projet";
+  render();
+}
+
+render();
 </script>
 
 </body>
