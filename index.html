@@ -1,52 +1,66 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>EasySite Builder</title>
+<meta charset="UTF-8">
+<title>EasySite Builder PRO</title>
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      display: flex;
-      background: #f5f5f5;
-    }
+<style>
+body {
+  margin: 0;
+  font-family: Arial;
+  display: flex;
+  background: #f4f6f8;
+}
 
-    .sidebar {
-      width: 250px;
-      background: #fff;
-      padding: 15px;
-      border-right: 1px solid #ddd;
-    }
+.sidebar {
+  width: 260px;
+  background: white;
+  padding: 20px;
+  border-right: 1px solid #ddd;
+}
 
-    .editor {
-      flex: 1;
-      padding: 20px;
-    }
+.editor {
+  flex: 1;
+  padding: 20px;
+  min-height: 100vh;
+}
 
-    .block {
-      padding: 15px;
-      margin-bottom: 10px;
-      background: #fff;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
+.block {
+  background: white;
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  cursor: grab;
+  position: relative;
+}
 
-    button {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 10px;
-      border: none;
-      border-radius: 6px;
-      background: #007bff;
-      color: white;
-      cursor: pointer;
-    }
+.delete-btn {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  color: red;
+  cursor: pointer;
+}
 
-    .export {
-      background: green;
-    }
-  </style>
+button {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: none;
+  background: #007bff;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #0056b3;
+}
+
+.export {
+  background: green;
+}
+</style>
 </head>
 
 <body>
@@ -57,120 +71,135 @@
   <button onclick="addImage()">Image</button>
   <button onclick="addButton()">Bouton</button>
 
-  <h3>Export</h3>
-  <button class="export" onclick="exportHTML()">Générer le site</button>
+  <h3>Exporter</h3>
+  <button class="export" onclick="downloadHTML()">Télécharger le site</button>
 </div>
 
-<div class="editor" id="editor">
-  <h2>Votre site</h2>
-</div>
+<div class="editor" id="editor"></div>
 
 <script>
-  var editor = document.getElementById("editor");
-  var blocks = [];
+var editor = document.getElementById("editor");
+var blocks = [];
+var dragIndex = null;
 
-  function render() {
-    editor.innerHTML = "<h2>Votre site</h2>";
+function render() {
+  editor.innerHTML = "";
 
-    for (var i = 0; i < blocks.length; i++) {
-      var block = blocks[i];
+  for (var i = 0; i < blocks.length; i++) {
+    (function(index) {
+      var block = blocks[index];
 
+      var el = document.createElement("div");
+      el.className = "block";
+      el.draggable = true;
+
+      // drag start
+      el.ondragstart = function() {
+        dragIndex = index;
+      };
+
+      // drag over
+      el.ondragover = function(e) {
+        e.preventDefault();
+      };
+
+      // drop
+      el.ondrop = function() {
+        var temp = blocks[dragIndex];
+        blocks.splice(dragIndex, 1);
+        blocks.splice(index, 0, temp);
+        render();
+      };
+
+      // delete button
+      var del = document.createElement("span");
+      del.className = "delete-btn";
+      del.innerText = "✖";
+      del.onclick = function() {
+        blocks.splice(index, 1);
+        render();
+      };
+      el.appendChild(del);
+
+      // content
       if (block.type === "text") {
-        var el = document.createElement("div");
-        el.className = "block";
-        el.contentEditable = true;
-        el.innerText = block.content;
+        var txt = document.createElement("div");
+        txt.contentEditable = true;
+        txt.innerText = block.content;
 
-        el.oninput = (function(b, element) {
-          return function() {
-            b.content = element.innerText;
-          };
-        })(block, el);
+        txt.oninput = function() {
+          block.content = txt.innerText;
+        };
 
-        editor.appendChild(el);
+        el.appendChild(txt);
       }
 
       if (block.type === "image") {
-        var el = document.createElement("div");
-        el.className = "block";
-
         var img = document.createElement("img");
         img.src = block.src;
         img.style.width = "100%";
-
         el.appendChild(img);
-        editor.appendChild(el);
       }
 
       if (block.type === "button") {
-        var el = document.createElement("div");
-        el.className = "block";
-
         var btn = document.createElement("button");
         btn.innerText = block.label;
-
         el.appendChild(btn);
-        editor.appendChild(el);
       }
-    }
-  }
 
-  function addText() {
-    blocks.push({
-      type: "text",
-      content: "Modifier ce texte..."
-    });
+      editor.appendChild(el);
+    })(i);
+  }
+}
+
+function addText() {
+  blocks.push({ type: "text", content: "Double-clique pour modifier" });
+  render();
+}
+
+function addImage() {
+  var url = prompt("URL image :");
+  if (url) {
+    blocks.push({ type: "image", src: url });
     render();
   }
+}
 
-  function addImage() {
-    var url = prompt("URL de l'image :");
-    if (url) {
-      blocks.push({
-        type: "image",
-        src: url
-      });
-      render();
+function addButton() {
+  var label = prompt("Texte bouton :");
+  if (label) {
+    blocks.push({ type: "button", label: label });
+    render();
+  }
+}
+
+function downloadHTML() {
+  var html = "<!DOCTYPE html><html><head><meta charset='UTF-8'><title>Mon site</title></head><body>";
+
+  for (var i = 0; i < blocks.length; i++) {
+    var block = blocks[i];
+
+    if (block.type === "text") {
+      html += "<p>" + block.content + "</p>";
+    }
+
+    if (block.type === "image") {
+      html += "<img src='" + block.src + "' style='max-width:100%'>";
+    }
+
+    if (block.type === "button") {
+      html += "<button>" + block.label + "</button>";
     }
   }
 
-  function addButton() {
-    var label = prompt("Texte du bouton :");
-    if (label) {
-      blocks.push({
-        type: "button",
-        label: label
-      });
-      render();
-    }
-  }
+  html += "</body></html>";
 
-  function exportHTML() {
-    var html = "<!DOCTYPE html><html><head><meta charset='UTF-8'><title>Mon site</title></head><body>";
-
-    for (var i = 0; i < blocks.length; i++) {
-      var block = blocks[i];
-
-      if (block.type === "text") {
-        html += "<p>" + block.content + "</p>";
-      }
-
-      if (block.type === "image") {
-        html += "<img src='" + block.src + "' style='max-width:100%'>";
-      }
-
-      if (block.type === "button") {
-        html += "<button>" + block.label + "</button>";
-      }
-    }
-
-    html += "</body></html>";
-
-    var win = window.open();
-    win.document.write("<textarea style='width:100%;height:300px'>" + html + "</textarea>");
-  }
-
-  render();
+  var blob = new Blob([html], { type: "text/html" });
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "mon-site.html";
+  a.click();
+}
 </script>
 
 </body>
