@@ -2,22 +2,21 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Builder Pro</title>
+<title>Builder Pro Stable</title>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial;}
 
 body{
   display:flex;
-  background: radial-gradient(circle at top left,#0f172a,#020617);
+  background:#020617;
   color:white;
 }
 
-/* SIDEBAR */
 .sidebar{
-  width:260px;
+  width:250px;
+  background:#0f172a;
   padding:20px;
-  background:rgba(255,255,255,0.03);
 }
 
 button{
@@ -27,36 +26,41 @@ button{
   border:none;
   border-radius:10px;
   cursor:pointer;
-  background:linear-gradient(45deg,#7c3aed,#2563eb);
+  background:#4f46e5;
   color:white;
 }
 
-/* MAIN */
-.main{flex:1;padding:20px;}
+.main{
+  flex:1;
+  padding:20px;
+}
 
 .builder{
   display:flex;
   gap:20px;
 }
 
-/* EDITOR */
 .editor{
   flex:1;
-  background:rgba(255,255,255,0.05);
-  padding:20px;
-  border-radius:20px;
-  min-height:500px;
+  background:#111827;
+  padding:15px;
+  border-radius:10px;
+}
+
+.preview{
+  width:300px;
+  background:white;
+  color:black;
+  padding:10px;
 }
 
 .block{
-  background:rgba(255,255,255,0.08);
-  margin-bottom:10px;
+  background:#1f2937;
   padding:10px;
+  margin-bottom:10px;
   border-radius:10px;
   position:relative;
 }
-
-.block[draggable]{cursor:grab;}
 
 .delete{
   position:absolute;
@@ -64,20 +68,6 @@ button{
   top:5px;
   cursor:pointer;
 }
-
-/* PREVIEW */
-.preview{
-  width:300px;
-  background:white;
-  color:black;
-  border-radius:20px;
-  padding:10px;
-}
-
-/* BUTTON STYLES */
-.btn1{background:linear-gradient(45deg,#7c3aed,#2563eb);color:white;padding:10px;border-radius:20px;border:none;}
-.btn2{background:transparent;border:2px solid black;padding:10px;border-radius:20px;}
-.btn3{background:black;color:white;padding:10px;border-radius:20px;}
 </style>
 </head>
 
@@ -95,170 +85,117 @@ button{
     <div class="editor" id="editor"></div>
     <div class="preview" id="preview"></div>
   </div>
-  <button onclick="exportHTML()">📦 Export</button>
+
+  <button onclick="exportHTML()">Exporter</button>
 </div>
 
 <script>
-var blocks=[];
-var editor=document.getElementById("editor");
-var preview=document.getElementById("preview");
-var dragIndex=null;
 
-/* ADD */
+var blocks = [];
+var editor = document.getElementById("editor");
+var preview = document.getElementById("preview");
+
+/* ADD BLOCK */
 function add(type){
-  var data={type:type,text:""};
 
-  if(type==="image"){
-    data.src=prompt("URL image");
+  var obj = {type:type};
+
+  if(type=="title"){ obj.text="Titre"; }
+
+  if(type=="text"){ obj.text="Texte"; obj.size=16; }
+
+  if(type=="image"){
+    var url = prompt("URL image");
+    if(!url) return;
+    obj.src = url;
+    obj.width = 100;
   }
 
-  if(type==="button"){
-    data.text="Bouton";
-    data.link=prompt("Lien du bouton");
-    data.style="btn1";
+  if(type=="button"){
+    obj.text="Bouton";
+    obj.link="#";
+    obj.style="1";
   }
 
-  blocks.push(data);
+  blocks.push(obj);
   render();
 }
 
 /* RENDER */
 function render(){
-  editor.innerHTML="";
 
-  blocks.forEach((b,i)=>{
+  editor.innerHTML = "";
 
-    var el=document.createElement("div");
-    el.className="block";
-    el.draggable=true;
+  for(var i=0;i<blocks.length;i++){
 
-    el.ondragstart=()=>dragIndex=i;
-    el.ondrop=()=>{
-      let temp=blocks[dragIndex];
-      blocks.splice(dragIndex,1);
-      blocks.splice(i,0,temp);
-      render();
-    };
-    el.ondragover=(e)=>e.preventDefault();
+    (function(i){
 
-    /* DELETE */
-    var del=document.createElement("span");
-    del.innerText="✖";
-    del.className="delete";
-    del.onclick=()=>{
-      blocks.splice(i,1);
-      render();
-    };
-    el.appendChild(del);
+      var b = blocks[i];
+      var el = document.createElement("div");
+      el.className="block";
 
-    /* CONTENT */
-    if(b.type==="title"){
-      var t=document.createElement("input");
-      t.value=b.text||"Titre";
-      t.style.fontSize="24px";
-      t.oninput=()=>b.text=t.value;
-      el.appendChild(t);
-    }
+      /* delete */
+      var del = document.createElement("span");
+      del.innerHTML="✖";
+      del.className="delete";
+      del.onclick=function(){
+        blocks.splice(i,1);
+        render();
+      };
+      el.appendChild(del);
 
-    if(b.type==="text"){
-      var t=document.createElement("textarea");
-      t.value=b.text||"Texte...";
-      t.oninput=()=>b.text=t.value;
+      /* TITLE */
+      if(b.type=="title"){
+        var inp=document.createElement("input");
+        inp.value=b.text;
+        inp.style.fontSize="24px";
+        inp.oninput=function(){ b.text=inp.value; };
+        el.appendChild(inp);
+      }
 
-      var size=document.createElement("input");
-      size.type="range"; size.min=10; size.max=50;
-      size.value=b.size||16;
-      size.oninput=()=>b.size=size.value;
+      /* TEXT */
+      if(b.type=="text"){
+        var txt=document.createElement("textarea");
+        txt.value=b.text;
+        txt.oninput=function(){ b.text=txt.value; };
 
-      el.appendChild(t);
-      el.appendChild(size);
-    }
+        var size=document.createElement("input");
+        size.type="range";
+        size.min=10;
+        size.max=50;
+        size.value=b.size;
+        size.oninput=function(){ b.size=size.value; };
 
-    if(b.type==="image"){
-      var img=document.createElement("img");
-      img.src=b.src;
-      img.style.width=(b.width||100)+"%";
+        el.appendChild(txt);
+        el.appendChild(size);
+      }
 
-      var range=document.createElement("input");
-      range.type="range"; range.min=20; range.max=100;
-      range.value=b.width||100;
-      range.oninput=()=>b.width=range.value;
+      /* IMAGE */
+      if(b.type=="image"){
+        var img=document.createElement("img");
+        img.src=b.src;
+        img.style.width=b.width+"%";
 
-      el.appendChild(img);
-      el.appendChild(range);
-    }
+        var range=document.createElement("input");
+        range.type="range";
+        range.min=10;
+        range.max=100;
+        range.value=b.width;
+        range.oninput=function(){ b.width=range.value; };
 
-    if(b.type==="button"){
-      var txt=document.createElement("input");
-      txt.value=b.text;
-      txt.oninput=()=>b.text=txt.value;
+        el.appendChild(img);
+        el.appendChild(range);
+      }
 
-      var link=document.createElement("input");
-      link.value=b.link||"";
-      link.placeholder="Lien";
-      link.oninput=()=>b.link=link.value;
+      /* BUTTON */
+      if(b.type=="button"){
 
-      var select=document.createElement("select");
-      ["btn1","btn2","btn3"].forEach(s=>{
-        var opt=document.createElement("option");
-        opt.value=s;
-        opt.text=s;
-        select.appendChild(opt);
-      });
-      select.onchange=()=>b.style=select.value;
+        var txt=document.createElement("input");
+        txt.value=b.text;
+        txt.oninput=function(){ b.text=txt.value; };
 
-      el.appendChild(txt);
-      el.appendChild(link);
-      el.appendChild(select);
-    }
+        var link=document.createElement("input");
+        link.value=b.link;
+        link.placeholder="Lien";
+        link.oninput=function(){ b.link=link.value; };
 
-    editor.appendChild(el);
-  });
-
-  renderPreview();
-}
-
-/* PREVIEW */
-function renderPreview(){
-  preview.innerHTML="";
-
-  blocks.forEach(b=>{
-
-    if(b.type==="title"){
-      preview.innerHTML+=`<h1>${b.text}</h1>`;
-    }
-
-    if(b.type==="text"){
-      preview.innerHTML+=`<p style="font-size:${b.size||16}px">${b.text}</p>`;
-    }
-
-    if(b.type==="image"){
-      preview.innerHTML+=`<img src="${b.src}" style="width:${b.width){
-      preview.innerHTML+=`<a href="${b.linkclass="${b.style}">${b.text}</button></a>`;
-    }
-
-  });
-}
-
-/* EXPORT */
-function exportHTML(){
-  let html="<html><body>";
-
-  blocks.forEach(b=>{
-    if(b.type==="title") html+=`<h1>${b.text}</h1>`;
-    if(b.type==="text") html+=`<p style="font-size:${b.size}px">${b.text}</p>`;
-    if(b.type==="image") html+=`<img src="${b.src}" style="width:${b html+=`<a href="${b.link${b.text}</button></a>`;
-  });
-
-  html+="</body></html>";
-
-  var blob=new Blob([html]);
-  var a=document.createElement("a");
-  a.href=URL.createObjectURL(blob);
-  a.download="site.html";
-  a.click();
-}
-</script>
-
-</body>
-</html>
