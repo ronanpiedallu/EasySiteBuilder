@@ -43,18 +43,8 @@
       cursor: pointer;
     }
 
-    button:hover {
-      background: #0056b3;
-    }
-
     .export {
       background: green;
-    }
-
-    textarea {
-      width: 100%;
-      height: 300px;
-      margin-top: 10px;
     }
   </style>
 </head>
@@ -76,32 +66,35 @@
 </div>
 
 <script>
-  const editor = document.getElementById("editor");
-  let blocks = [];
+  var editor = document.getElementById("editor");
+  var blocks = [];
 
   function render() {
     editor.innerHTML = "<h2>Votre site</h2>";
 
-    blocks.forEach(block => {
+    for (var i = 0; i < blocks.length; i++) {
+      var block = blocks[i];
 
       if (block.type === "text") {
-        const el = document.createElement("div");
+        var el = document.createElement("div");
         el.className = "block";
         el.contentEditable = true;
         el.innerText = block.content;
 
-        el.oninput = () => {
-          block.content = el.innerText;
-        };
+        el.oninput = (function(b, element) {
+          return function() {
+            b.content = element.innerText;
+          };
+        })(block, el);
 
         editor.appendChild(el);
       }
 
       if (block.type === "image") {
-        const el = document.createElement("div");
+        var el = document.createElement("div");
         el.className = "block";
 
-        const img = document.createElement("img");
+        var img = document.createElement("img");
         img.src = block.src;
         img.style.width = "100%";
 
@@ -110,17 +103,16 @@
       }
 
       if (block.type === "button") {
-        const el = document.createElement("div");
+        var el = document.createElement("div");
         el.className = "block";
 
-        const btn = document.createElement("button");
-        btn.textContent = block.label;
+        var btn = document.createElement("button");
+        btn.innerText = block.label;
 
         el.appendChild(btn);
         editor.appendChild(el);
       }
-
-    });
+    }
   }
 
   function addText() {
@@ -132,7 +124,7 @@
   }
 
   function addImage() {
-    const url = prompt("URL de l'image :");
+    var url = prompt("URL de l'image :");
     if (url) {
       blocks.push({
         type: "image",
@@ -143,7 +135,7 @@
   }
 
   function addButton() {
-    const label = prompt("Texte du bouton :");
+    var label = prompt("Texte du bouton :");
     if (label) {
       blocks.push({
         type: "button",
@@ -154,34 +146,28 @@
   }
 
   function exportHTML() {
-    let html = `
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Mon site</title>
-</head>
-<body>
-`;
+    var html = "<!DOCTYPE html><html><head><meta charset='UTF-8'><title>Mon site</title></head><body>";
 
-    blocks.forEach(block => {
+    for (var i = 0; i < blocks.length; i++) {
+      var block = blocks[i];
+
       if (block.type === "text") {
-        html += `<p>${block.content}</p>`;
+        html += "<p>" + block.content + "</p>";
       }
 
       if (block.type === "image") {
-        html += `<img src="${block.src}" style="max-width:ype === "button") {
-        html += `<button>${block.label}</button>`;
+        html += "<img src='" + block.src + "' style='max-width:100%'>";
       }
-    });
 
-    html += `
-</body>
-</html>
-`;
+      if (block.type === "button") {
+        html += "<button>" + block.label + "</button>";
+      }
+    }
 
-    const win = window.open();
-    win.document.write("<textarea>" + html + "</textarea>");
+    html += "</body></html>";
+
+    var win = window.open();
+    win.document.write("<textarea style='width:100%;height:300px'>" + html + "</textarea>");
   }
 
   render();
